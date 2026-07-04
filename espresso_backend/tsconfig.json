@@ -4,6 +4,7 @@
     "target": "ES2022",                          /* Specify ECMAScript target version */
     "module": "NodeNext",                        /* Specify module code generation */
     "moduleResolution": "NodeNext",              /* Determine how modules get resolved */
+    "types": ["node"],
     
     /* Directories */
     "rootDir": "./src",                          /* Specify the root folder of input files */

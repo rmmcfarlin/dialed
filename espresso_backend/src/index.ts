@@ -3,9 +3,10 @@ dotenv.config()
 
 import express from 'express'
 import cors from 'cors'
-import brewProfileRouter from './routes/brew_profiles.js'
+import { db } from './db/db.js'
 
-// import { drizzle } from 'drizzle-orm/node-postgres'
+import brewProfileRouter from './routes/brew_profiles.js'
+import userRouter from './routes/users.js'
 
 const PORT = process.env.PORT || 3000
 
@@ -17,5 +18,20 @@ app.use(cors({
 }))
 
 app.use('/brews', brewProfileRouter)
+app.use('/users', userRouter)
 
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`))
+export const dbIsConnected = () => {
+    try {
+        db.execute("SELECT 1")
+        console.log("Pgsql connected")
+        return true
+    } catch (error) {
+        console.error("Pgsql database connection failed", error)
+        process.exit(1)
+    }
+}
+
+
+if (dbIsConnected()) {
+    app.listen(PORT, () => console.log(`Server running on port ${PORT}`))
+}
