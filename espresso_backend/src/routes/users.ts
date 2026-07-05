@@ -1,13 +1,14 @@
 import { Router } from "express"
 import { validateNewUser } from "../middleware/new_user_validation.js"
-import { createUser, getUser } from "../controllers/user_controller.js"
+import { createUser, loginUser} from "../controllers/user_controller.js"
 
 const router = Router()
 
-// GET
-router.get("/", getUser)
+// POST new user registration
+router.post("/create-account", validateNewUser, createUser)
 
-// POST
-router.post("/", validateNewUser, createUser)
+// POST user login
+router.post("/login", loginUser)
+
 
 export default router
