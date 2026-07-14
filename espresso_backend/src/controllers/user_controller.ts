@@ -8,7 +8,6 @@ import jsonwebtoken from 'jsonwebtoken'
 import { type NewUser } from "../types/user_types.js"
 
 
-
 // POST, create user
 export const createUser = async (req: Request, res: Response) => {
 
@@ -86,11 +85,10 @@ export const loginUser = async (req: Request, res: Response) => {
 
     let userData: User
 
-
     const queryRes = await db
-    .select({userId: usersTable.userId, firstName: usersTable.firstName, lastName: usersTable.lastName, password: usersTable.password})
-    .from(usersTable)
-    .where(eq(usersTable.email, email))
+        .select({userId: usersTable.userId, firstName: usersTable.firstName, lastName: usersTable.lastName, password: usersTable.password})
+        .from(usersTable)
+        .where(eq(usersTable.email, email))
 
     if (queryRes.length == 0) {
         return res.status(404).json({error: "User email not found"})
@@ -147,4 +145,7 @@ export const loginUser = async (req: Request, res: Response) => {
 }
 
 // POST, refresh 
-// DELETE
+export const refreshUser = (req: Request, res: Response) => {
+
+    
+}

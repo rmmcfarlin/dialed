@@ -5,7 +5,6 @@ import jsonwebtoken from 'jsonwebtoken'
 export const requireAuth = (req: Request, res: Response, next: NextFunction) => {
 
     try {
-        
         let authHeader
 
         if (req.headers.authorization) {

@@ -10,5 +10,11 @@ router.post("/create-account", validateNewUser, createUser)
 // POST user login
 router.post("/login", loginUser)
 
+// POST refresh
+router.post("/refresh")
+
+// POST logout
+router.post("/logout")
+
 
 export default router
