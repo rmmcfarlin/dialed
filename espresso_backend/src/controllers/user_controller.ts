@@ -4,8 +4,9 @@ import { usersTable } from "../db/schema.js"
 import { db } from "../db/db.js"
 import { type User } from "../types/user_types.js";
 import bcrypt from "bcrypt"
-import jsonwebtoken from 'jsonwebtoken'
+import jsonwebtoken, { JsonWebTokenError } from 'jsonwebtoken'
 import { type NewUser } from "../types/user_types.js"
+import { jwtPayload } from "../types/auth_types.js";
 
 
 // POST, create user
@@ -146,6 +147,47 @@ export const loginUser = async (req: Request, res: Response) => {
 
 // POST, refresh 
 export const refreshUser = (req: Request, res: Response) => {
+    const refreshCookie: string = req.cookies.refreshToken
 
+    try {
+        if (!refreshCookie) {
+            return res.status(401).json({ error: "NoTokenError", message: "No refresh token set, unable to authorize"})
+        }
+
+        let userId
+        
+        if (process.env.JWT_REFRESH_SECRET) {
+            
+            try {
+                const decoded:  jwtPayload = jsonwebtoken.verify(refreshCookie, process.env.JWT_REFRESH_SECRET) as jwtPayload
+                userId = decoded.userId
+            } catch (err: any) {
+                if (err.name == "TokenExpiredError") {
+                    return res.status(401).json({ error: err.name, message: "Expired refresh token"})
+                }
+                return res.status(401).json({ error: err.name, message: "Invalid refresh token"})
+            }
+        } else {
+            return res.status(500).json({ error: "Server configuration error, no refresh secret" })
+        }
+
+        let accessToken
+
+        if (process.env.JWT_ACCESS_SECRET) {
+
+            accessToken = jsonwebtoken.sign(
+                { userId: userId},
+                process.env.JWT_ACCESS_SECRET,
+                { expiresIn: "15min"}
+            )
+        } else {
+            return res.status(500).json({ error: "Server configuration error, no access secret" })
+        }
+
+        return res.status(200).json({accessToken, message: "Refresh Successful"})
+        
+    } catch {
+        return res.status(500).json({error: "Server error, unable to refresh"})
+    }
     
 }
