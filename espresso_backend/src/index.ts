@@ -3,6 +3,7 @@ dotenv.config()
 
 import express from 'express'
 import cors from 'cors'
+import cookieParser from 'cookie-parser'
 import { db } from './db/db.js'
 
 import brewProfileRouter from './routes/brew_profiles.js'
@@ -16,6 +17,8 @@ app.use(cors({
     origin: "http://localhost:3001",
     credentials: true
 }))
+
+app.use(cookieParser())
 
 app.use('/brews', brewProfileRouter)
 app.use('/users', userRouter)
