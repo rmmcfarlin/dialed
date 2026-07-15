@@ -4,7 +4,7 @@ import { usersTable } from "../db/schema.js"
 import { db } from "../db/db.js"
 import { type User } from "../types/user_types.js";
 import bcrypt from "bcrypt"
-import jsonwebtoken, { JsonWebTokenError } from 'jsonwebtoken'
+import jsonwebtoken from 'jsonwebtoken'
 import { type NewUser } from "../types/user_types.js"
 import { jwtPayload } from "../types/auth_types.js";
 
@@ -146,7 +146,7 @@ export const loginUser = async (req: Request, res: Response) => {
 }
 
 // POST, refresh 
-export const refreshUser = (req: Request, res: Response) => {
+export const refreshUser =  async (req: Request, res: Response) => {
     const refreshCookie: string = req.cookies.refreshToken
 
     try {
@@ -190,4 +190,25 @@ export const refreshUser = (req: Request, res: Response) => {
         return res.status(500).json({error: "Server error, unable to refresh"})
     }
     
+}
+
+
+// POST, /logout
+
+export const logoutUser = async (req: Request, res: Response) => {
+
+    // const refreshToken: string = req.cookies.refreshToken
+
+    try {
+        res.clearCookie("refreshToken", {
+            httpOnly: true,
+            sameSite: "lax",
+            secure: false,
+            path: "/users/refresh",
+        })
+    } catch (err) {
+        return res.status(500).json({ error: err, message: "Internal server error - unable to logout"})
+    }
+
+    return res.status(200).json({ message: "Logged out successfully"})
 }

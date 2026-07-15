@@ -1,6 +1,6 @@
 import { Router } from "express"
 import { validateNewUser } from "../middleware/new_user_validation.js"
-import { createUser, loginUser, refreshUser} from "../controllers/user_controller.js"
+import { createUser, loginUser, refreshUser, logoutUser} from "../controllers/user_controller.js"
 
 const router = Router()
 
@@ -14,7 +14,7 @@ router.post("/login", loginUser)
 router.post("/refresh", refreshUser)
 
 // POST logout
-// router.post("/logout")
+router.post("/logout", logoutUser)
 
 
 export default router
