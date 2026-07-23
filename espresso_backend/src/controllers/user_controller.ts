@@ -195,9 +195,7 @@ export const refreshUser =  async (req: Request, res: Response) => {
 
 // POST, /logout
 
-export const logoutUser = async (req: Request, res: Response) => {
-
-    // const refreshToken: string = req.cookies.refreshToken
+export const logoutUser = async ( _req: Request, res: Response ) => {
 
     try {
         res.clearCookie("refreshToken", {
@@ -212,3 +210,6 @@ export const logoutUser = async (req: Request, res: Response) => {
 
     return res.status(200).json({ message: "Logged out successfully"})
 }
+
+
+// POST, /reset
