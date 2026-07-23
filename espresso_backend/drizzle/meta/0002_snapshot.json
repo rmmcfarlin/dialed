@@ -1,0 +1,442 @@
+{
+  "id": "b719f0f1-4973-4e3b-920a-a548106a4662",
+  "prevId": "625a1e23-0053-4b54-8529-636a7975e9e7",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.brewing_profile": {
+      "name": "brewing_profile",
+      "schema": "",
+      "columns": {
+        "brew_profile_id": {
+          "name": "brew_profile_id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "identity": {
+            "type": "always",
+            "name": "brewing_profile_brew_profile_id_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "2147483647",
+            "cache": "1",
+            "cycle": false
+          }
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "bean": {
+          "name": "bean",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "target_ratio_type": {
+          "name": "target_ratio_type",
+          "type": "targetRatioType",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "target_ratio_min": {
+          "name": "target_ratio_min",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "target_ratio_max": {
+          "name": "target_ratio_max",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "target_flow_min": {
+          "name": "target_flow_min",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "target_flow_max": {
+          "name": "target_flow_max",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "modified_at": {
+          "name": "modified_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "machine_id": {
+          "name": "machine_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "grinder_id": {
+          "name": "grinder_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "brewing_profile_machine_id_machine_machine_id_fk": {
+          "name": "brewing_profile_machine_id_machine_machine_id_fk",
+          "tableFrom": "brewing_profile",
+          "tableTo": "machine",
+          "columnsFrom": [
+            "machine_id"
+          ],
+          "columnsTo": [
+            "machine_id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "brewing_profile_grinder_id_grinder_grinder_id_fk": {
+          "name": "brewing_profile_grinder_id_grinder_grinder_id_fk",
+          "tableFrom": "brewing_profile",
+          "tableTo": "grinder",
+          "columnsFrom": [
+            "grinder_id"
+          ],
+          "columnsTo": [
+            "grinder_id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.grinder": {
+      "name": "grinder",
+      "schema": "",
+      "columns": {
+        "grinder_id": {
+          "name": "grinder_id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "identity": {
+            "type": "always",
+            "name": "grinder_grinder_id_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "2147483647",
+            "cache": "1",
+            "cycle": false
+          }
+        },
+        "grinder_name": {
+          "name": "grinder_name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "grinder_user_id_user_user_id_fk": {
+          "name": "grinder_user_id_user_user_id_fk",
+          "tableFrom": "grinder",
+          "tableTo": "user",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "user_id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.machine": {
+      "name": "machine",
+      "schema": "",
+      "columns": {
+        "machine_id": {
+          "name": "machine_id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "identity": {
+            "type": "always",
+            "name": "machine_machine_id_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "2147483647",
+            "cache": "1",
+            "cycle": false
+          }
+        },
+        "machine_name": {
+          "name": "machine_name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "machine_user_id_user_user_id_fk": {
+          "name": "machine_user_id_user_user_id_fk",
+          "tableFrom": "machine",
+          "tableTo": "user",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "user_id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.shot": {
+      "name": "shot",
+      "schema": "",
+      "columns": {
+        "shot_id": {
+          "name": "shot_id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "identity": {
+            "type": "always",
+            "name": "shot_shot_id_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "2147483647",
+            "cache": "1",
+            "cycle": false
+          }
+        },
+        "dose": {
+          "name": "dose",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "output": {
+          "name": "output",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "shot_duration": {
+          "name": "shot_duration",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "bean_age": {
+          "name": "bean_age",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "grind_settings": {
+          "name": "grind_settings",
+          "type": "varchar(1000)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "puck_prep_notes": {
+          "name": "puck_prep_notes",
+          "type": "varchar(1000)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "extraction_profile": {
+          "name": "extraction_profile",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "shot_notes": {
+          "name": "shot_notes",
+          "type": "varchar(1000)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "brew_profile_id": {
+          "name": "brew_profile_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "shot_brew_profile_id_brewing_profile_brew_profile_id_fk": {
+          "name": "shot_brew_profile_id_brewing_profile_brew_profile_id_fk",
+          "tableFrom": "shot",
+          "tableTo": "brewing_profile",
+          "columnsFrom": [
+            "brew_profile_id"
+          ],
+          "columnsTo": [
+            "brew_profile_id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.user": {
+      "name": "user",
+      "schema": "",
+      "columns": {
+        "user_id": {
+          "name": "user_id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "identity": {
+            "type": "always",
+            "name": "user_user_id_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "2147483647",
+            "cache": "1",
+            "cycle": false
+          }
+        },
+        "first_name": {
+          "name": "first_name",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "last_name": {
+          "name": "last_name",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "password": {
+          "name": "password",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "user_email_unique": {
+          "name": "user_email_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "email"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {
+    "public.targetRatioType": {
+      "name": "targetRatioType",
+      "schema": "public",
+      "values": [
+        "ristretto",
+        "standard",
+        "lungo",
+        "custom"
+      ]
+    }
+  },
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

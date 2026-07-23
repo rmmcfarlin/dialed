@@ -16,9 +16,7 @@ export const targetRatioTypeEnum = pg.pgEnum("targetRatioType", ["ristretto", "s
 export const brewingProfileTable = pg.pgTable("brewing_profile", {
     brewProfileId: pg.integer("brew_profile_id").primaryKey().generatedAlwaysAsIdentity(),
     name: pg.varchar({length: 100}),
-    machine: pg.varchar({length: 100}),
     bean: pg.varchar({length: 100}),
-    grinder: pg.varchar({length: 100}),
     targetRatioType: targetRatioTypeEnum("target_ratio_type"),
     targetRatioMin: pg.decimal("target_ratio_min"),
     targetRatioMax: pg.decimal("target_ratio_max"),
@@ -26,7 +24,9 @@ export const brewingProfileTable = pg.pgTable("brewing_profile", {
     targetFlowMax: pg.decimal("target_flow_max"),
     created_at: pg.timestamp().notNull().defaultNow(),
     modified_at: pg.timestamp().notNull().defaultNow(),
-    userId: pg.integer("user_id").notNull().references(() => usersTable.userId, { onDelete: 'cascade'})
+    machine_id: pg.integer("machine_id").notNull().references(() => machineTable.machineId, { onDelete: 'cascade'}),
+    grinder_id: pg.integer("grinder_id").notNull().references(() => griderTable.grinderId, { onDelete: 'cascade'}), 
+    user_id: pg.integer("user_id").notNull().references(() => usersTable.userId, { onDelete: 'cascade'})
 })
 
 export const shotTable = pg.pgTable("shot", {
@@ -41,4 +41,16 @@ export const shotTable = pg.pgTable("shot", {
     shotNotes: pg.varchar("shot_notes", {length: 1000}),
     created_at: pg.timestamp().notNull().defaultNow(),
     brewProfileId: pg.integer("brew_profile_id").notNull().references(() => brewingProfileTable.brewProfileId, { onDelete: 'cascade'})
+})
+
+export const machineTable = pg.pgTable("machine", {
+    machineId: pg.integer("machine_id").primaryKey().generatedAlwaysAsIdentity(),
+    machineName: pg.varchar("machine_name", {length: 255}), 
+    userId: pg.integer("user_id").notNull().references(() => usersTable.userId, { onDelete: 'cascade'})
+})
+
+export const griderTable = pg.pgTable("grinder", {
+    grinderId: pg.integer("grinder_id").primaryKey().generatedAlwaysAsIdentity(),
+    machineName: pg.varchar("grinder_name", {length: 255}), 
+    userId: pg.integer("user_id").notNull().references(() => usersTable.userId, { onDelete: 'cascade'})
 })
