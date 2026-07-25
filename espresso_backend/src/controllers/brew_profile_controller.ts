@@ -1,5 +1,4 @@
 import { Request, Response } from "express"
-import { TargetRatioType, type BrewProfile } from "../types/brew_data_types.js"
 
 
 
@@ -17,9 +16,11 @@ export const getBrewProfile = async (_req: Request, res: Response) => {
 
 // POST, create new profile
 export const createBrewProfile = async (req: Request, res: Response) => {
-    try {
-        const {profileName, bean, machine, grinder, targetRatioType } = req.body
+    const { profileName } = req.body
 
+    try {
+        // const {profileName, bean, machine, grinder, targetRatioType } = req.body
+        return res.status(200).json({message: `Successfully created new brew profile ${profileName}`})
 
     } catch (e) {
         if (e instanceof Error) console.log(e.message)

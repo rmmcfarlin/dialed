@@ -1,3 +1,5 @@
+import { type BrewProfile } from "./brew_data_types.ts";
+
 export {};
 
 declare global {
@@ -6,6 +8,7 @@ declare global {
       user?: {
         userId: number;
       };
+      brewProfile?: BrewProfile
     }
   }
 }

@@ -8,9 +8,9 @@ export type BrewProfile = {
     machine: string,
     grinder: string,
     targetRatioType: TargetRatioType,
-    targetRatioMin?: number,
-    targetRatioMax?: number,
-    targetFlowMin?: number,
-    targetFlowMax?: number
+    targetRatioMin: number,
+    targetRatioMax: number,
+    targetFlowMin: number,
+    targetFlowMax: number
 }
 

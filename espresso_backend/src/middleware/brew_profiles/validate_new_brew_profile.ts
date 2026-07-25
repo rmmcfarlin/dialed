@@ -1,22 +1,42 @@
 import { Request, Response, NextFunction } from "express"
 import { targetRatioTypeEnum } from "../../db/schema.js"
 import * as z from "zod"
-import { ZodError } from "zod"
+
+// schema for string of digits only for IDs
+const digitStringSchema = z.string().regex(/^\d+$/, {
+        message: "String must contain only digits",
+    });
+
+const RatioTypeEnum = z.enum(targetRatioTypeEnum.enumValues)
+
+const BrewProfileSchema = z.object({
+    profileName: z.string().min(1, {message: "Profile name must be at least 1 character"}).max(100, {message: "Profile name must be less than 100 characters"}),
+    bean: z.string().min(1, {message: "Bean name must be at least 1 character"}).max(100, {message: "Bean name must be less than 100 characters"}),
+    machine: digitStringSchema,
+    grinder: digitStringSchema,
+    targetRatioType: RatioTypeEnum, 
+    targetRatioMin: z.number().gt(0, {message: "Target Ratio min must be greater than 0"}).lte(9.9, {message: "Target ratio min must be at most 9.9"}),
+    targetRatioMax: z.number().gt(0, {message: "Target Ratio max must be greater than 0"}).lte(10, {message: "Target ratio max must at most 10"}), 
+    targetFlowMin: z.number().gt(0, {message: "Target flow min must be greater than 0 g/s"}).lte(4.9, {message: "Target flow min must at most 4.9 g/s"}),
+    targetFlowMax: z.number().gt(0, {message: "Target flow max must be greater than 0 g/s"}).lte(5, {message: "Target flow max must at most 5 g/s"})
+})
+.refine((data) => data.targetRatioMin < data.targetRatioMax, {
+    message: "Target ratio min must be less than target ratio max"
+})
+.refine((data) => data.targetFlowMin < data.targetFlowMax, {
+    message: "Target flow min must be less than target flow max"
+})
 
 export const validateNewBrewProfile = async (req: Request, res: Response, next: NextFunction) => {
 
-    // Validate that the ratioType is a valid member of the type union / enum
-    const RatioTypeEnum = z.enum(targetRatioTypeEnum.enumValues)
-    const targetRatioType: string = req.body.targetRatioType
 
-    try {
-        RatioTypeEnum.parse(targetRatioType)
-    } catch (e) {
-        if (e instanceof ZodError) {
-            return res.status(400).json({error: e.message, message: "Invalid target ratio type"})
-        } else {
-            return res.status(400).json({message: "Invalid target ratio type"})
-        }
+    const parsed =  BrewProfileSchema.safeParse(req.body)
+
+    if (!parsed.success) {
+        const flattened = z.flattenError(parsed.error)
+        return res.status(400).json({message: flattened})
+    } else {
+        const validProfile = parsed.data
+        next(validProfile)
     }
-    
 }   
