@@ -2,7 +2,7 @@ import { Request, Response } from "express"
 import { type BrewProfile } from "../types/brew_data_types.js"
 import { db } from "../db/db.js"
 import { brewingProfileTable } from "../db/schema.js"
-import { eq, and, DrizzleQueryError} from "drizzle-orm"
+import { eq, lt, and, DrizzleQueryError, desc} from "drizzle-orm"
 
 
 // GET single profile
@@ -35,11 +35,50 @@ export const getBrewProfile = async (req: Request, res: Response) => {
         }
 
     } catch (e) {
-        if (e instanceof Error) console.log(e.message)
+        if (e instanceof Error) console.error(e)
         return res.status(500).json({err: "unable to GET"})
     }
 }
 
+// GET all profiles for a user
+export const getAllBrewProfiles = async (req: Request, res: Response) => {
+
+    if (!req.user?.userId) {
+        return res.status(500).json({message: "Server configuration error - no userID at /all-brew-profiles get all profiles"}) 
+    }
+
+    if (!req.query.limit) {
+        return res.status(400).json({message: "Pagination limit param missing"}) 
+    }
+    
+    const userId = req.user.userId
+    const cursor = req.query.cursor as string | undefined
+    const limit = Number(req.query.limit) 
+
+    const conditions = [eq(brewingProfileTable.user_id, userId)]
+
+    if (cursor) {
+        conditions.push(lt(brewingProfileTable.created_at, new Date(cursor)))
+    }
+
+    try {
+
+        const result = await db.select().from(brewingProfileTable)
+        .where(and(...conditions))
+        .limit(limit)
+        .orderBy(desc(brewingProfileTable.created_at))
+
+        if (result.length == 0) {
+            return res.status(404).json({message: `No brew profiles found for user`})
+        } else {
+            return res.status(200).json({data: result, cursor: result[limit - 1].created_at})
+        }
+
+    } catch (e) {
+        if (e instanceof Error) console.error(e)
+        return res.status(500).json({message: "Server configuration error, unable to get brew profiles"})
+    }
+}
 
 // POST, create new profile
 export const createBrewProfile = async (req: Request, res: Response) => {

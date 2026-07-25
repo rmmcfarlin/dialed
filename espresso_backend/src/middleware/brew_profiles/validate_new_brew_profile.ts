@@ -3,7 +3,7 @@ import { targetRatioTypeEnum } from "../../db/schema.js"
 import * as z from "zod"
 
 // schema for string of digits only for IDs
-const digitStringSchema = z.string().regex(/^\d+$/, {
+export const digitStringSchema = z.string().regex(/^\d+$/, {
         message: "String must contain only digits",
     });
 
