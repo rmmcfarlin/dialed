@@ -6,7 +6,7 @@ import { validateNewBrewProfile } from '../middleware/brew_profiles/validate_new
 const router = Router()
 
 // GET
-router.get('/', getBrewProfile)
+router.get('/', requireAuth, getBrewProfile)
 
 // POST, create new brew profile
 router.post('/new-brew-profile', requireAuth, validateNewBrewProfile, createBrewProfile)

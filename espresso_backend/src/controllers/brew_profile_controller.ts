@@ -2,13 +2,38 @@ import { Request, Response } from "express"
 import { type BrewProfile } from "../types/brew_data_types.js"
 import { db } from "../db/db.js"
 import { brewingProfileTable } from "../db/schema.js"
+import { eq, and, DrizzleQueryError} from "drizzle-orm"
 
 
-// GET
-export const getBrewProfile = async (_req: Request, res: Response) => {
+// GET single profile
+export const getBrewProfile = async (req: Request, res: Response) => {
+
+    if (!req.user?.userId) {
+        return res.status(500).json({message: "Server configuration error - no userID at /brew-profile get single profile"}) 
+    }
+
+    if (!req.query.id) {
+        return res.status(400).json({message: "No brew profile ID incldued with request"})
+    }
+
+    const userId = Number(req.user.userId)
+    const brewProfileId = Number(req.query.id)
+
     try {
-        const result = {message: "Success"}
-        return res.status(201).json(result)
+
+        const result = await db.select().from(brewingProfileTable)
+            .where(
+                and(
+                    eq(brewingProfileTable.brewProfileId, brewProfileId), eq(brewingProfileTable.user_id, userId)
+                )
+            )
+
+        if (result.length == 0) {
+            return res.status(404).json({message: `Brew profile: ${brewProfileId}  not found`})
+        } else {
+            return res.status(200).json({data: result})
+        }
+
     } catch (e) {
         if (e instanceof Error) console.log(e.message)
         return res.status(500).json({err: "unable to GET"})
@@ -45,11 +70,29 @@ export const createBrewProfile = async (req: Request, res: Response) => {
             targetFlowMax: data.targetFlowMax
         })
         
-        return res.status(200).json({message: `Successfully created new brew profile ${data.profileName}`})
+        return res.status(201).json({message: `Successfully created new brew profile ${data.profileName}`})
 
     } catch (e) {
-        if (e instanceof Error) console.log(e.message)
-        return res.status(500).json({error: "Server configuration error, unable to create brew profile"})
+       
+        if (e instanceof DrizzleQueryError) {
+            console.error(e)
+
+            const error = e.cause as any
+
+            if (error?.code == "23505") {
+                return res.status(400).json({message: "Cannot insert duplicate value against unique constraint"})
+            } else if (error?.code == "23503") {
+                return res.status(400).json({message: "Resource not found, check machine id / grinder id"})
+            } else if (error?.code == "23502") {
+                return res.status(400).json({message: "One or more required values missing"})
+            } 
+        }
+        return res.status(500).json({error: "Unable to create brew profile"})
     }
 
 }
+
+// 23505: Unique Constraint Violation (e.g., trying to insert an existing email address).
+// 23503: Foreign Key Violation (e.g., referencing a user ID that does not exist).
+// 23502: Not-Null Violation (e.g., omitting a required field missing a default value).
+// 23514: Check Constraint Violation (e.g., a value fails a custom database-level validation rule).
