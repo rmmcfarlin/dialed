@@ -10,8 +10,8 @@ const digitStringSchema = z.string().regex(/^\d+$/, {
 const RatioTypeEnum = z.enum(targetRatioTypeEnum.enumValues)
 
 const BrewProfileSchema = z.object({
-    profileName: z.string().min(1, {message: "Profile name must be at least 1 character"}).max(100, {message: "Profile name must be less than 100 characters"}),
-    bean: z.string().min(1, {message: "Bean name must be at least 1 character"}).max(100, {message: "Bean name must be less than 100 characters"}),
+    profileName: z.string().min(1, {message: "Profile name must be at least 1 character"}).max(99, {message: "Profile name must be less than 100 characters"}),
+    bean: z.string().min(1, {message: "Bean name must be at least 1 character"}).max(99, {message: "Bean name must be less than 100 characters"}),
     machine: digitStringSchema,
     grinder: digitStringSchema,
     targetRatioType: RatioTypeEnum, 
@@ -37,6 +37,7 @@ export const validateNewBrewProfile = async (req: Request, res: Response, next: 
         return res.status(400).json({message: flattened})
     } else {
         const validProfile = parsed.data
-        next(validProfile)
+        req.brewProfile = validProfile
     }
+    next()
 }   
