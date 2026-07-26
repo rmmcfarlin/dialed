@@ -1,4 +1,4 @@
-import { type BrewProfile } from "./brew_data_types.ts";
+import { type BrewProfile, TargetRatioType } from "./brew_data_types.ts";
 
 export {};
 
@@ -8,7 +8,16 @@ declare global {
       user?: {
         userId: number;
       };
-      brewProfile?: BrewProfile
+      brewProfile?: BrewProfile;
+          
+      brewProfileUpdate?: {
+          profileId: string,
+          targetRatioType?: TargetRatioType, 
+          targetRatioMin: number,
+          targetRatioMax: number, 
+          targetFlowMin: number,
+          targetFlowMax: number
+      };
     }
   }
 }

@@ -131,6 +131,47 @@ export const createBrewProfile = async (req: Request, res: Response) => {
 
 }
 
+// PUT, update brew profile
+
+export const updateBrewProfile = async (req: Request, res: Response) => {
+
+    if (!req.brewProfileUpdate) {
+        return res.status(500).json({message: "Server configuration error at update brew profile"})
+    }
+
+    if (!req.user?.userId) {
+        return res.status(500).json({message: "Server configuration error - no userID at /new-brew-profile"})
+    }
+
+    try {
+        await db.update(brewingProfileTable).set({
+            targetRatioMin: req.brewProfileUpdate.targetRatioMin,
+            targetRatioMax: req.brewProfileUpdate.targetRatioMax,
+            targetFlowMin: req.brewProfileUpdate.targetFlowMin,
+            targetFlowMax: req.brewProfileUpdate.targetFlowMax
+        })
+        .where(eq(brewingProfileTable.brewProfileId, Number(req.brewProfileUpdate.profileId)))
+
+        return res.status(200).json({message: `Brew profile ${req.brewProfileUpdate.profileId} updated successfully`})
+        
+    } catch (e) {
+        if (e instanceof DrizzleQueryError) {
+            console.error(e)
+
+            const error = e.cause as any
+
+            if (error?.code == "23505") {
+                return res.status(400).json({message: "Cannot insert duplicate value against unique constraint"})
+            } else if (error?.code == "23503") {
+                return res.status(400).json({message: "Resource not found, check brew profile id"})
+            } else if (error?.code == "23502") {
+                return res.status(400).json({message: "One or more required values missing"})
+            } 
+        }
+        return res.status(500).json({error: "Unable to create brew profile"})
+    }
+}
+
 // 23505: Unique Constraint Violation (e.g., trying to insert an existing email address).
 // 23503: Foreign Key Violation (e.g., referencing a user ID that does not exist).
 // 23502: Not-Null Violation (e.g., omitting a required field missing a default value).
