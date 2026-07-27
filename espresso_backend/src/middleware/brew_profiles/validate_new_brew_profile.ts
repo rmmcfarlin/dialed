@@ -11,9 +11,9 @@ const RatioTypeEnum = z.enum(targetRatioTypeEnum.enumValues)
 
 const BrewProfileSchema = z.object({
     profileName: z.string().min(1, {message: "Profile name must be at least 1 character"}).max(99, {message: "Profile name must be less than 100 characters"}),
-    bean: z.string().min(1, {message: "Bean name must be at least 1 character"}).max(99, {message: "Bean name must be less than 100 characters"}),
-    machine: digitStringSchema,
-    grinder: digitStringSchema,
+    beanId: z.number(),
+    machineId: z.number(),
+    grinderId: z.number(),
     targetRatioType: RatioTypeEnum, 
     targetRatioMin: z.number().gt(0, {message: "Target Ratio min must be greater than 0"}).lte(9.9, {message: "Target ratio min must be at most 9.9"}),
     targetRatioMax: z.number().gt(0, {message: "Target Ratio max must be greater than 0"}).lte(10, {message: "Target ratio max must at most 10"}), 

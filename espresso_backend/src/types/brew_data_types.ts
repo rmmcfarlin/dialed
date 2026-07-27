@@ -4,9 +4,9 @@ export type TargetRatioType = typeof targetRatioTypeEnum.enumValues[number]
 
 export type BrewProfile = {
     profileName: string,
-    bean: string,
-    machine: string,
-    grinder: string,
+    beanId: number,
+    machineId: number,
+    grinderId: number,
     targetRatioType: TargetRatioType,
     targetRatioMin: number,
     targetRatioMax: number,

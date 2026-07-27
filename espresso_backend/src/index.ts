@@ -20,8 +20,8 @@ app.use(cors({
 
 app.use(cookieParser())
 
-app.use('/brew-profile', brewProfileRouter)
-app.use('/user', userRouter)
+app.use('/brew-profiles', brewProfileRouter)
+app.use('/users', userRouter)
 
 export const dbIsConnected = () => {
     try {
