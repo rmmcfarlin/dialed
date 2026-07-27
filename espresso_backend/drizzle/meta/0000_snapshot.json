@@ -1,11 +1,105 @@
 {
-  "id": "f589247d-38da-4c26-afd6-508f2dca7ad9",
+  "id": "d6edb2d0-b9bf-47c2-bddb-e63feac8b2ee",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
-    "public.brewing_profile": {
-      "name": "brewing_profile",
+    "public.bean": {
+      "name": "bean",
+      "schema": "",
+      "columns": {
+        "bean_id": {
+          "name": "bean_id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "identity": {
+            "type": "always",
+            "name": "bean_bean_id_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "2147483647",
+            "cache": "1",
+            "cycle": false
+          }
+        },
+        "bean_name": {
+          "name": "bean_name",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "roast_level": {
+          "name": "roast_level",
+          "type": "roastLevelType",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "origin": {
+          "name": "origin",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "tastingNotes": {
+          "name": "tastingNotes",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "roaster_id": {
+          "name": "roaster_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "bean_roaster_id_roaster_roaster_id_fk": {
+          "name": "bean_roaster_id_roaster_roaster_id_fk",
+          "tableFrom": "bean",
+          "tableTo": "roaster",
+          "columnsFrom": [
+            "roaster_id"
+          ],
+          "columnsTo": [
+            "roaster_id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "bean_user_id_user_user_id_fk": {
+          "name": "bean_user_id_user_user_id_fk",
+          "tableFrom": "bean",
+          "tableTo": "user",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "user_id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.brew_profile": {
+      "name": "brew_profile",
       "schema": "",
       "columns": {
         "brew_profile_id": {
@@ -15,7 +109,7 @@
           "notNull": true,
           "identity": {
             "type": "always",
-            "name": "brewing_profile_brew_profile_id_seq",
+            "name": "brew_profile_brew_profile_id_seq",
             "schema": "public",
             "increment": "1",
             "startWith": "1",
@@ -31,21 +125,40 @@
           "primaryKey": false,
           "notNull": false
         },
-        "machine": {
-          "name": "machine",
-          "type": "varchar(100)",
+        "bean_id": {
+          "name": "bean_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "target_ratio_type": {
+          "name": "target_ratio_type",
+          "type": "targetRatioType",
+          "typeSchema": "public",
           "primaryKey": false,
           "notNull": false
         },
-        "bean": {
-          "name": "bean",
-          "type": "varchar(100)",
+        "target_ratio_min": {
+          "name": "target_ratio_min",
+          "type": "numeric",
           "primaryKey": false,
           "notNull": false
         },
-        "grinder": {
-          "name": "grinder",
-          "type": "varchar(100)",
+        "target_ratio_max": {
+          "name": "target_ratio_max",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "target_flow_min": {
+          "name": "target_flow_min",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "target_flow_max": {
+          "name": "target_flow_max",
+          "type": "numeric",
           "primaryKey": false,
           "notNull": false
         },
@@ -63,6 +176,18 @@
           "notNull": true,
           "default": "now()"
         },
+        "machine_id": {
+          "name": "machine_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "grinder_id": {
+          "name": "grinder_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
         "user_id": {
           "name": "user_id",
           "type": "integer",
@@ -72,9 +197,216 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "brewing_profile_user_id_user_user_id_fk": {
-          "name": "brewing_profile_user_id_user_user_id_fk",
-          "tableFrom": "brewing_profile",
+        "brew_profile_bean_id_bean_bean_id_fk": {
+          "name": "brew_profile_bean_id_bean_bean_id_fk",
+          "tableFrom": "brew_profile",
+          "tableTo": "bean",
+          "columnsFrom": [
+            "bean_id"
+          ],
+          "columnsTo": [
+            "bean_id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "brew_profile_machine_id_machine_machine_id_fk": {
+          "name": "brew_profile_machine_id_machine_machine_id_fk",
+          "tableFrom": "brew_profile",
+          "tableTo": "machine",
+          "columnsFrom": [
+            "machine_id"
+          ],
+          "columnsTo": [
+            "machine_id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "brew_profile_grinder_id_grinder_grinder_id_fk": {
+          "name": "brew_profile_grinder_id_grinder_grinder_id_fk",
+          "tableFrom": "brew_profile",
+          "tableTo": "grinder",
+          "columnsFrom": [
+            "grinder_id"
+          ],
+          "columnsTo": [
+            "grinder_id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "brew_profile_user_id_user_user_id_fk": {
+          "name": "brew_profile_user_id_user_user_id_fk",
+          "tableFrom": "brew_profile",
+          "tableTo": "user",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "user_id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.grinder": {
+      "name": "grinder",
+      "schema": "",
+      "columns": {
+        "grinder_id": {
+          "name": "grinder_id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "identity": {
+            "type": "always",
+            "name": "grinder_grinder_id_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "2147483647",
+            "cache": "1",
+            "cycle": false
+          }
+        },
+        "grinder_name": {
+          "name": "grinder_name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "grinder_user_id_user_user_id_fk": {
+          "name": "grinder_user_id_user_user_id_fk",
+          "tableFrom": "grinder",
+          "tableTo": "user",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "user_id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.machine": {
+      "name": "machine",
+      "schema": "",
+      "columns": {
+        "machine_id": {
+          "name": "machine_id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "identity": {
+            "type": "always",
+            "name": "machine_machine_id_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "2147483647",
+            "cache": "1",
+            "cycle": false
+          }
+        },
+        "machine_name": {
+          "name": "machine_name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "machine_user_id_user_user_id_fk": {
+          "name": "machine_user_id_user_user_id_fk",
+          "tableFrom": "machine",
+          "tableTo": "user",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "user_id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.roaster": {
+      "name": "roaster",
+      "schema": "",
+      "columns": {
+        "roaster_id": {
+          "name": "roaster_id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "identity": {
+            "type": "always",
+            "name": "roaster_roaster_id_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "2147483647",
+            "cache": "1",
+            "cycle": false
+          }
+        },
+        "roaster_name": {
+          "name": "roaster_name",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "roaster_user_id_user_user_id_fk": {
+          "name": "roaster_user_id_user_user_id_fk",
+          "tableFrom": "roaster",
           "tableTo": "user",
           "columnsFrom": [
             "user_id"
@@ -131,12 +463,6 @@
           "primaryKey": false,
           "notNull": true
         },
-        "bean_age": {
-          "name": "bean_age",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false
-        },
         "grind_settings": {
           "name": "grind_settings",
           "type": "varchar(1000)",
@@ -177,10 +503,10 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "shot_brew_profile_id_brewing_profile_brew_profile_id_fk": {
-          "name": "shot_brew_profile_id_brewing_profile_brew_profile_id_fk",
+        "shot_brew_profile_id_brew_profile_brew_profile_id_fk": {
+          "name": "shot_brew_profile_id_brew_profile_brew_profile_id_fk",
           "tableFrom": "shot",
-          "tableTo": "brewing_profile",
+          "tableTo": "brew_profile",
           "columnsFrom": [
             "brew_profile_id"
           ],
@@ -267,7 +593,29 @@
       "isRLSEnabled": false
     }
   },
-  "enums": {},
+  "enums": {
+    "public.roastLevelType": {
+      "name": "roastLevelType",
+      "schema": "public",
+      "values": [
+        "light",
+        "medium light",
+        "medium",
+        "medium dark",
+        "dark"
+      ]
+    },
+    "public.targetRatioType": {
+      "name": "targetRatioType",
+      "schema": "public",
+      "values": [
+        "ristretto",
+        "standard",
+        "lungo",
+        "custom"
+      ]
+    }
+  },
   "schemas": {},
   "sequences": {},
   "roles": {},

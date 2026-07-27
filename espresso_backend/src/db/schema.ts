@@ -13,18 +13,18 @@ export const usersTable = pg.pgTable("user", {
 
 export const targetRatioTypeEnum = pg.pgEnum("targetRatioType", ["ristretto", "standard", "lungo", "custom"])
 
-export const brewingProfileTable = pg.pgTable("brewing_profile", {
+export const brewProfileTable = pg.pgTable("brew_profile", {
     brewProfileId: pg.integer("brew_profile_id").primaryKey().generatedAlwaysAsIdentity(),
     name: pg.varchar({length: 100}),
-    bean: pg.varchar({length: 100}),
+    beanId: pg.integer("bean_id").notNull().references(() => beanTable.beanId, {onDelete: "cascade"}),
     targetRatioType: targetRatioTypeEnum("target_ratio_type"),
     targetRatioMin: pg.decimal("target_ratio_min", { mode: 'number' }),
     targetRatioMax: pg.decimal("target_ratio_max", { mode: 'number' }),
     targetFlowMin: pg.decimal("target_flow_min", { mode: 'number' }),
     targetFlowMax: pg.decimal("target_flow_max", { mode: 'number' }),
     created_at: pg.timestamp().notNull().defaultNow(),
-    modified_at: pg.timestamp().notNull().defaultNow(),
-    machine_id: pg.integer("machine_id").notNull().references(() => machineTable.machineId, { onDelete: 'cascade'}),
+    modified_at: pg.timestamp().notNull().defaultNow().$onUpdate(() => new Date()),
+    machine_id: pg.integer("machine_id").notNull().references(() => machineTable.machineId, { onDelete: "cascade"}),
     grinder_id: pg.integer("grinder_id").notNull().references(() => griderTable.grinderId, { onDelete: 'cascade'}), 
     user_id: pg.integer("user_id").notNull().references(() => usersTable.userId, { onDelete: 'cascade'})
 })
@@ -34,23 +34,40 @@ export const shotTable = pg.pgTable("shot", {
     dose: pg.doublePrecision().notNull(),
     output: pg.doublePrecision().notNull(),
     shotDuration: pg.doublePrecision("shot_duration").notNull(),
-    beanAge: pg.integer("bean_age"),
     grindSettings: pg.varchar("grind_settings", {length: 1000}),
     puckPrepNotes: pg.varchar("puck_prep_notes",{length: 1000}),
     extractionProfile: pg.varchar("extraction_profile", {enum: ["Sour", "Bitter", "Sour + Bitter", "Balanced"]}),
     shotNotes: pg.varchar("shot_notes", {length: 1000}),
     created_at: pg.timestamp().notNull().defaultNow(),
-    brewProfileId: pg.integer("brew_profile_id").notNull().references(() => brewingProfileTable.brewProfileId, { onDelete: 'cascade'})
+    brewProfileId: pg.integer("brew_profile_id").notNull().references(() => brewProfileTable.brewProfileId, { onDelete: 'cascade'})
 })
 
 export const machineTable = pg.pgTable("machine", {
     machineId: pg.integer("machine_id").primaryKey().generatedAlwaysAsIdentity(),
-    machineName: pg.varchar("machine_name", {length: 255}), 
+    machineName: pg.varchar("machine_name", {length: 255}).notNull(), 
     userId: pg.integer("user_id").notNull().references(() => usersTable.userId, { onDelete: 'cascade'})
 })
 
 export const griderTable = pg.pgTable("grinder", {
     grinderId: pg.integer("grinder_id").primaryKey().generatedAlwaysAsIdentity(),
-    machineName: pg.varchar("grinder_name", {length: 255}), 
+    machineName: pg.varchar("grinder_name", {length: 255}).notNull(), 
     userId: pg.integer("user_id").notNull().references(() => usersTable.userId, { onDelete: 'cascade'})
+})
+
+
+export const roasterTable = pg.pgTable("roaster", {
+    roasterId: pg.integer("roaster_id").primaryKey().generatedAlwaysAsIdentity(),
+    roasterName: pg.varchar("roaster_name", {length: 100}).notNull(),
+    userId: pg.integer("user_id").notNull().references(() => usersTable.userId, { onDelete: "cascade"})
+})
+
+export const roastLevelEnum = pg.pgEnum("roastLevelType", ["light", "medium light", "medium", "medium dark", "dark"])
+export const beanTable = pg.pgTable("bean", {
+    beanId: pg.integer("bean_id").primaryKey().generatedAlwaysAsIdentity(),
+    beanName: pg.varchar("bean_name", {length: 100}).notNull(),
+    roastLevel: roastLevelEnum("roast_level"),
+    origin: pg.varchar({length: 100}),
+    tastingNotes: pg.varchar("tasting_notes", {length: 255}), 
+    roasterId: pg.integer("roaster_id").references(() => roasterTable.roasterId, { onDelete: "no action"}),
+    userId: pg.integer("user_id").notNull().references(() => usersTable.userId, { onDelete: "cascade"})
 })

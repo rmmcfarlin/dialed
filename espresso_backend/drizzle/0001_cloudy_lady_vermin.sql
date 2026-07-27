@@ -1,0 +1,1 @@
+ALTER TABLE "bean" RENAME COLUMN "tastingNotes" TO "tasting_notes";

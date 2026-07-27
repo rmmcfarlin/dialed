@@ -10,7 +10,7 @@ export const digitStringSchema = z.string().regex(/^\d+$/, {
 const RatioTypeEnum = z.enum(targetRatioTypeEnum.enumValues)
 
 const BrewTargetsSchema = z.object({
-    profileId: digitStringSchema,
+    profileId: z.number(),
     targetRatioType: RatioTypeEnum.optional(), 
     targetRatioMin: z.number().gt(0, {message: "Target Ratio min must be greater than 0"}).lte(9.9, {message: "Target ratio min must be at most 9.9"}),
     targetRatioMax: z.number().gt(0, {message: "Target Ratio max must be greater than 0"}).lte(10, {message: "Target ratio max must at most 10"}), 

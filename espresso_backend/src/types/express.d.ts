@@ -11,7 +11,7 @@ declare global {
       brewProfile?: BrewProfile;
           
       brewProfileUpdate?: {
-          profileId: string,
+          profileId: number,
           targetRatioType?: TargetRatioType, 
           targetRatioMin: number,
           targetRatioMax: number, 
