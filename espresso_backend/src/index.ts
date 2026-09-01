@@ -8,6 +8,7 @@ import { db } from './db/db.js'
 
 import brewProfileRouter from './routes/brew_profiles.js'
 import userRouter from './routes/users.js'
+import roasterRouter from './routes/roasters.js'
 
 const PORT = process.env.PORT || 3000
 
@@ -20,8 +21,9 @@ app.use(cors({
 
 app.use(cookieParser())
 
-app.use('/brew-profiles', brewProfileRouter)
 app.use('/users', userRouter)
+app.use('/brew-profiles', brewProfileRouter)
+app.use('/roasters', roasterRouter)
 
 export const dbIsConnected = () => {
     try {

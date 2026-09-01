@@ -39,26 +39,33 @@ export const shotTable = pg.pgTable("shot", {
     extractionProfile: pg.varchar("extraction_profile", {enum: ["Sour", "Bitter", "Sour + Bitter", "Balanced"]}),
     shotNotes: pg.varchar("shot_notes", {length: 1000}),
     created_at: pg.timestamp().notNull().defaultNow(),
+    modified_at: pg.timestamp().notNull().defaultNow().$onUpdate(() => new Date()),
     brewProfileId: pg.integer("brew_profile_id").notNull().references(() => brewProfileTable.brewProfileId, { onDelete: 'cascade'})
 })
 
 export const machineTable = pg.pgTable("machine", {
     machineId: pg.integer("machine_id").primaryKey().generatedAlwaysAsIdentity(),
     machineName: pg.varchar("machine_name", {length: 255}).notNull(), 
-    userId: pg.integer("user_id").notNull().references(() => usersTable.userId, { onDelete: 'cascade'})
+    userId: pg.integer("user_id").notNull().references(() => usersTable.userId, { onDelete: 'cascade'}),
+    created_at: pg.timestamp().notNull().defaultNow(),
+    modified_at: pg.timestamp().notNull().defaultNow().$onUpdate(() => new Date())
 })
 
 export const griderTable = pg.pgTable("grinder", {
     grinderId: pg.integer("grinder_id").primaryKey().generatedAlwaysAsIdentity(),
     machineName: pg.varchar("grinder_name", {length: 255}).notNull(), 
-    userId: pg.integer("user_id").notNull().references(() => usersTable.userId, { onDelete: 'cascade'})
+    userId: pg.integer("user_id").notNull().references(() => usersTable.userId, { onDelete: 'cascade'}),
+    created_at: pg.timestamp().notNull().defaultNow(),
+    modified_at: pg.timestamp().notNull().defaultNow().$onUpdate(() => new Date())
 })
 
 
 export const roasterTable = pg.pgTable("roaster", {
     roasterId: pg.integer("roaster_id").primaryKey().generatedAlwaysAsIdentity(),
     roasterName: pg.varchar("roaster_name", {length: 100}).notNull(),
-    userId: pg.integer("user_id").notNull().references(() => usersTable.userId, { onDelete: "cascade"})
+    userId: pg.integer("user_id").notNull().references(() => usersTable.userId, { onDelete: "cascade"}),
+    created_at: pg.timestamp().notNull().defaultNow(),
+    modified_at: pg.timestamp().notNull().defaultNow().$onUpdate(() => new Date())
 })
 
 export const roastLevelEnum = pg.pgEnum("roastLevelType", ["light", "medium light", "medium", "medium dark", "dark"])
@@ -69,5 +76,7 @@ export const beanTable = pg.pgTable("bean", {
     origin: pg.varchar({length: 100}),
     tastingNotes: pg.varchar("tasting_notes", {length: 255}), 
     roasterId: pg.integer("roaster_id").references(() => roasterTable.roasterId, { onDelete: "no action"}),
-    userId: pg.integer("user_id").notNull().references(() => usersTable.userId, { onDelete: "cascade"})
+    userId: pg.integer("user_id").notNull().references(() => usersTable.userId, { onDelete: "cascade"}),
+    created_at: pg.timestamp().notNull().defaultNow(),
+    modified_at: pg.timestamp().notNull().defaultNow().$onUpdate(() => new Date())
 })
