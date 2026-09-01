@@ -15,6 +15,13 @@
       "when": 1785127062976,
       "tag": "0001_cloudy_lady_vermin",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1788237924811,
+      "tag": "0002_absent_catseye",
+      "breakpoints": true
     }
   ]
 }

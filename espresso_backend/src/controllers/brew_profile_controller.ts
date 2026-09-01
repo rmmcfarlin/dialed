@@ -96,7 +96,7 @@ export const createBrewProfile = async (req: Request, res: Response) => {
 
     
     try {
-        await db.insert(brewProfileTable).values({
+        const result = await db.insert(brewProfileTable).values({
             name: data.profileName,
             beanId: data.beanId,
             machine_id: data.machineId,
@@ -108,8 +108,9 @@ export const createBrewProfile = async (req: Request, res: Response) => {
             targetFlowMin: data.targetFlowMin,
             targetFlowMax: data.targetFlowMax
         })
+        .returning()
         
-        return res.status(201).json({message: `Successfully created new brew profile ${data.profileName}`})
+        return res.status(201).json({message: `Successfully created new brew profile ${data.profileName}`, data: result})
 
     } catch (e) {
        
@@ -143,8 +144,6 @@ export const updateBrewProfile = async (req: Request, res: Response) => {
         return res.status(500).json({message: "Server configuration error - no userID at /new-brew-profile"})
     }
 
-    const now = String(Date.now())
-
     try {
         await db.update(brewProfileTable).set({
             targetRatioMin: req.brewProfileUpdate.targetRatioMin,
@@ -152,7 +151,12 @@ export const updateBrewProfile = async (req: Request, res: Response) => {
             targetFlowMin: req.brewProfileUpdate.targetFlowMin,
             targetFlowMax: req.brewProfileUpdate.targetFlowMax
         })
-        .where(eq(brewProfileTable.brewProfileId, Number(req.brewProfileUpdate.profileId)))
+        .where(
+            and(
+                eq(brewProfileTable.brewProfileId, Number(req.brewProfileUpdate.profileId)), 
+                eq(brewProfileTable.user_id, Number(req.user.userId))
+            )
+        )
 
         return res.status(200).json({message: `Brew profile ${req.brewProfileUpdate.profileId} updated successfully`})
 
@@ -177,13 +181,23 @@ export const updateBrewProfile = async (req: Request, res: Response) => {
 // DELETE
 export const deleteBrewProfile = async (req: Request, res: Response) => {
 
+    if (!req.user?.userId) {
+        return res.status(500).json({message: "Server configuration error at update brew profile"})
+    }
+
     if (!req.query.id) {
         return res.status(400).json({message: "No brew profile id included, cannot delete"})
     }
     const profileId = Number(req.query.id)
 
     try {
-        await db.delete(brewProfileTable).where(eq(brewProfileTable.brewProfileId, profileId))
+        await db.delete(brewProfileTable)
+        .where(
+            and(
+                eq(brewProfileTable.brewProfileId, profileId), 
+                eq(brewProfileTable.user_id, Number(req.user.userId))
+            )
+        )
         return res.status(200).json({message: `Brew profile ${profileId} successfully deleted` })
     } catch (e) {
         if (e instanceof DrizzleQueryError) {
